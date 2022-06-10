@@ -1,3 +1,18 @@
+A really simple mod to help you out when you are trying to build a bridge.
+
+Have you ever wanted a mod that helps you to build a perfect bridge fast and without falling? This mod will do that for you
+
+Commands:
+
+- LShift + Z: Toggle scaffold mod.
+- #scaffold_help: Show help.
+- #scaffold_toggle: Toggle scaffold mod.
+- #scaffold_autoplace_toggle: Toggle auto block placement.
+- #scaffold_lockview_toggle: Toggle locking player view.
+
+Download: https://github.com/Suleiman700/ForgeScaffoldMod_1.12.2/releases/tag/Forge
+
+
 -------------------------------------------
 Source installation information for modders
 -------------------------------------------
