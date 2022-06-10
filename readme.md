@@ -13,7 +13,8 @@ Have you ever wanted a mod that helps you to build a perfect bridge fast and wit
 
 #### Commands:
 
-* LShift + Z: Toggle scaffold mod (On/Off).
+* Tab: Toggle stairs mod (On/Off).
+* CapsLock: Toggle scaffold mod (On/Off).
 * #scaffold_help: Show help.
 * #scaffold_toggle: Toggle scaffold mod.
 * #scaffold_autoplace_toggle: Toggle auto block placement.
