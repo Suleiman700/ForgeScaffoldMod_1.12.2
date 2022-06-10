@@ -18,10 +18,10 @@ public class Commands {
             System.out.println(playerMessage);
             // Scaffold
             if (playerMessage.contains("#scaffold_")) {
-                if (playerMessage.contains("#scaffold_help")) {
-                    Chat.showScaffoldHelp();
+                if (playerMessage.contains("#scaffold_sneak")) {
+                    BlockEdgeEvent.setSneak(true);
                 }
-                if (playerMessage.contains("#scaffold_toggle")) {
+                else if (playerMessage.contains("#scaffold_toggle")) {
                     BlockEdgeEvent.toggle();
                 }
                 else if (playerMessage.contains("#scaffold_autoplace_toggle")) {
