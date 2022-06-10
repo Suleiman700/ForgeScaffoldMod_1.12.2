@@ -6,6 +6,7 @@ Have you ever wanted a mod that helps you to build a perfect bridge fast and wit
 
 #### Features:
 * Auto sneak and prevent player from falling.
+* Scaffold can build bridges as well as it can build stairs.
 * Scaffold works in all 8 directions (SOUTH, NORTH, EAST, WEST, SOUTH_WEST, WEST_NORTH, NORTH_EAST, EAST_SOUTH).
 * Can lock player camera into a specific angle that makes the building faster.
 * Can auto place blocks, So the player does not have to keep clicking 'right-click'.
