@@ -40,7 +40,7 @@ public class Chat {
         player.sendMessage(new TextComponentString("#scaffold_toggle => Toggle scaffold").setStyle(new Style().setColor(TextFormatting.RED).setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "#scaffold_toggle"))));
         player.sendMessage(new TextComponentString("#scaffold_autoplace_toggle => Toggle auto block placement").setStyle(new Style().setColor(TextFormatting.RED).setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "#scaffold_autoplace_toggle"))));
         player.sendMessage(new TextComponentString("#scaffold_lockview_toggle => Toggle lock view").setStyle(new Style().setColor(TextFormatting.RED).setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "#scaffold_lockview_toggle"))));
-        player.sendMessage(new TextComponentString("You can always toggle Scaffold using RShift+Z").setStyle(new Style().setColor(TextFormatting.LIGHT_PURPLE)));
+        player.sendMessage(new TextComponentString("You can always toggle Scaffold using LShift+Z").setStyle(new Style().setColor(TextFormatting.LIGHT_PURPLE)));
         player.sendMessage(new TextComponentString("=====================").setStyle(new Style().setColor(TextFormatting.LIGHT_PURPLE)));
         player.sendMessage(new TextComponentString("").setStyle(new Style().setColor(TextFormatting.LIGHT_PURPLE)));
     }
