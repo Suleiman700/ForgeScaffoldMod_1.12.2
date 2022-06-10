@@ -2,19 +2,33 @@ package com.example.examplemod.Movements;
 
 import com.example.examplemod.Data;
 import com.example.examplemod.chat.Chat;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.lwjgl.input.Keyboard;
+
+import java.security.Key;
+
+import static net.minecraft.client.settings.GameSettings.isKeyDown;
 
 public class BlockEdgeEvent {
 
     public static boolean Enabled = false;
+
+    public static boolean EnabledStairs = false;
     public static boolean Sneak = false;
     public static boolean LockView = true;
     public static boolean AutoPlace = false;
+
+    public static boolean FreeMove = true; // Move in all directions
+
+    public static int Timer = 1;
 
     // Enable / Disable
     public static void toggle() {
@@ -27,7 +41,24 @@ public class BlockEdgeEvent {
             Chat.SendMessage("Scaffold Enabled", "green");
         }
         Sneak = Enabled;
+        EnabledStairs = false;
     }
+
+
+    // Enable / Disable stairs
+    public static void toggleStairs() {
+        if (EnabledStairs) {
+            EnabledStairs = false;
+            KeyBinding bind = FMLClientHandler.instance().getClient().gameSettings.keyBindBack;
+            KeyBinding.setKeyBindState(bind.getKeyCode(), false);
+            Chat.SendMessage("Stairs Disabled", "red");
+        } else if (!EnabledStairs) {
+            EnabledStairs = true;
+            Enabled = true;
+            Chat.SendMessage("Stairs Enabled", "green");
+        }
+    }
+
 
     // Get sneak state
     public static boolean getSneak() {
@@ -50,13 +81,26 @@ public class BlockEdgeEvent {
     // Toggle LockView
     public static void toggleLockView() {
         if (LockView) LockView = false;
-        else LockView = true;
+        else {
+            LockView = true;
+            FreeMove = false;
+            Chat.SendMessage("Scaffold FreeMove has been disabled - Please disable LockView to use FreeMove", "green");
+        }
         Chat.SendMessage("Scaffold LockView: " + LockView, "green");
     }
 
+    // Toggle FreeMove
+    public static void toggleFreeMove() {
+        if (FreeMove) FreeMove = false;
+        else {
+            FreeMove = true;
+            LockView = false;
+            Chat.SendMessage("Scaffold LockView has been disabled - Please disable FreeMove to use LockView", "green");
+        }
+        Chat.SendMessage("Scaffold FreeMove: " + FreeMove, "green");
+    }
 
 
-    
     @SubscribeEvent
     public void onTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.START) return; // see EntityPlayer.onUpdate
@@ -69,7 +113,7 @@ public class BlockEdgeEvent {
             // Store player looking at direction
 //            int LookingDirection2 = MathHelper.floor((double)((event.player.rotationYaw * 4F) / 360F) + 0.5D) & 3;
 //            Chat.SendMessage(String.valueOf(MathHelper.floor((double)((event.player.rotationYaw * 8F) / 360F) + 0.5D) & 7), "green");
-            int LookingDirection2 = MathHelper.floor((double)((event.player.rotationYaw * 8F) / 360F) + 0.5D) & 7;
+            int LookingDirection2 = MathHelper.floor((double) ((event.player.rotationYaw * 8F) / 360F) + 0.5D) & 7;
             Data.setLookingDirection(LookingDirection2);
             String LookingDirection = Data.getLookingDirection();
 
@@ -84,13 +128,33 @@ public class BlockEdgeEvent {
 
             if (!Enabled) return;
 
+            if (EnabledStairs) {
+                KeyBinding.onTick(new GameSettings().keyBindUseItem.getKeyCode()); // Right click (place block)
+                player.rotationPitch = Float.parseFloat("80.3"); // Set camera pitch
+//                player.rotationYaw = Float.parseFloat("0"); // Set camera yaw
+
+                if (Timer % 2 == 0) {
+                    KeyBinding bind = FMLClientHandler.instance().getClient().gameSettings.keyBindBack;
+                    KeyBinding.setKeyBindState(bind.getKeyCode(), false);
+                    Timer = 1;
+                } else {
+                    KeyBinding bind = FMLClientHandler.instance().getClient().gameSettings.keyBindBack;
+                    KeyBinding.setKeyBindState(bind.getKeyCode(), true);
+                    Timer++;
+                }
+            }
+
+
+
 //            Chat.SendMessage(LookingDirection, "red");
 
-            if (LookingDirection=="SOUTH"){
-                if (playerZ < blockUnderZ) {
+            if (FreeMove) LockView = false;
+
+
+            if (LookingDirection == "SOUTH") {
+                if (playerZ < blockUnderZ || FreeMove) {
                     // System.out.println("SOUTH OUT");
                     Sneak = true;
-
                     if (LockView) {
                         player.rotationPitch = Float.parseFloat("82.9"); // Set camera pitch
                         player.rotationYaw = Float.parseFloat("0"); // Set camera yaw
@@ -98,16 +162,23 @@ public class BlockEdgeEvent {
 
                     if (AutoPlace) {
                         KeyBinding.onTick(new GameSettings().keyBindUseItem.getKeyCode()); // Right click (place block)
+
+                        Minecraft mc = Minecraft.getMinecraft();
+//                        KeyBinding[] keys = Minecraft.getMinecraft().gameSettings.keyBindings;
+//                        KeyBinding.onTick(mc.gameSettings.keyBindLeft.getKeyCode());
+//                        KeyBinding.onTick(new GameSettings().keyBindUseItem.getKeyCode()); // Right click (place block)
+
+
+
                     }
+
                 } else {
                     Sneak = false;
                 }
-                if (playerHeadPitch > 65 && playerHeadPitch < 86) {
-                }
-            }
-
-            else if (LookingDirection=="SOUTH_WEST") {
-                if (playerHeadPitch > 70 && playerHeadPitch < 85) {
+//            if (playerHeadPitch > 65 && playerHeadPitch < 86) {
+//            }
+            } else if (LookingDirection == "SOUTH_WEST") {
+                if (playerHeadPitch > 70 && playerHeadPitch < 85 || FreeMove) {
                     Sneak = true;
 
                     if (LockView) {
@@ -121,10 +192,8 @@ public class BlockEdgeEvent {
                 } else {
                     Sneak = false;
                 }
-            }
-
-            else if (LookingDirection=="WEST") {
-                if (playerX > blockUnderX) {
+            } else if (LookingDirection == "WEST") {
+                if (playerX > blockUnderX || FreeMove) {
                     Sneak = true;
 
                     if (LockView) {
@@ -138,10 +207,8 @@ public class BlockEdgeEvent {
                 } else {
                     Sneak = false;
                 }
-            }
-
-            else if (LookingDirection=="WEST_NORTH") {
-                if (playerHeadPitch > 70 && playerHeadPitch < 85) {
+            } else if (LookingDirection == "WEST_NORTH") {
+                if (playerHeadPitch > 70 && playerHeadPitch < 85 || FreeMove) {
                     Sneak = true;
 
                     if (LockView) {
@@ -155,10 +222,8 @@ public class BlockEdgeEvent {
                 } else {
                     Sneak = false;
                 }
-            }
-
-            else if (LookingDirection=="NORTH") {
-                if (playerZ > blockUnderZ) {
+            } else if (LookingDirection == "NORTH") {
+                if (playerZ > blockUnderZ || FreeMove) {
                     if (LockView) {
                         player.rotationPitch = Float.parseFloat("82.5"); // Set camera pitch
                         player.rotationYaw = Float.parseFloat("-180"); // Set camera yaw
@@ -172,10 +237,8 @@ public class BlockEdgeEvent {
                 } else {
                     Sneak = false;
                 }
-            }
-
-            else if (LookingDirection=="NORTH_EAST") {
-                if (playerHeadPitch > 70 && playerHeadPitch < 85) {
+            } else if (LookingDirection == "NORTH_EAST") {
+                if (playerHeadPitch > 70 && playerHeadPitch < 85 || FreeMove) {
                     Sneak = true;
 
                     if (LockView) {
@@ -189,10 +252,8 @@ public class BlockEdgeEvent {
                 } else {
                     Sneak = false;
                 }
-            }
-
-            else if (LookingDirection=="EAST") {
-                if (playerX < blockUnderX) {
+            } else if (LookingDirection == "EAST") {
+                if (playerX < blockUnderX || FreeMove) {
                     Sneak = true;
 
                     if (LockView) {
@@ -206,7 +267,23 @@ public class BlockEdgeEvent {
                 } else {
                     Sneak = false;
                 }
+            } else if (LookingDirection == "EAST_SOUTH") {
+                if (playerHeadPitch > 70 && playerHeadPitch < 85 || FreeMove) {
+                    Sneak = true;
+
+                    if (LockView) {
+                        player.rotationPitch = Float.parseFloat("79.6"); // Set camera pitch
+                        player.rotationYaw = Float.parseFloat("-74.9"); // Set camera yaw
+                    }
+
+                    if (AutoPlace) {
+                        KeyBinding.onTick(new GameSettings().keyBindUseItem.getKeyCode()); // Right click (place block)
+                    }
+                } else {
+                    Sneak = false;
+                }
             }
         }
     }
 }
+

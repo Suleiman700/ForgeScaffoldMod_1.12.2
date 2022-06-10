@@ -30,6 +30,9 @@ public class Commands {
                 else if (playerMessage.contains("#scaffold_lockview_toggle")) {
                     BlockEdgeEvent.toggleLockView();
                 }
+                else if (playerMessage.contains("#scaffold_freemove_toggle")) {
+                    BlockEdgeEvent.toggleFreeMove();
+                }
                 event.setCanceled(true);
             }
         }

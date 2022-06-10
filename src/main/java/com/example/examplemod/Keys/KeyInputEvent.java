@@ -12,8 +12,13 @@ public class KeyInputEvent {
     @SubscribeEvent
     public void KeyInputEvent(InputEvent.KeyInputEvent event) {
         // Toggle scaffold
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && Keyboard.isKeyDown(Keyboard.KEY_Z)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_CAPITAL)) {
             BlockEdgeEvent.toggle();
+        }
+
+        // Toggle stairs
+        if (Keyboard.isKeyDown(Keyboard.KEY_TAB)) {
+            BlockEdgeEvent.toggleStairs();
         }
     }
 
